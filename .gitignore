@@ -1,0 +1,44 @@
+# Node.js
+node_modules/
+
+.DS_Store
+*.log
+npm-debug.log*
+dist/
+build/
+
+# VSCode
+.vscode/
+
+# OS
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Misc
+*.local
+*.cache
+
+# Sequelize
+config/config.json
+
+# Ignore database files
+*.sqlite
+*.db
+
+.env
+server/.env
+
+# Client dependencies and build
+client/node_modules/
+client/dist/
+
+# Client env and misc
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+client/.DS_Store

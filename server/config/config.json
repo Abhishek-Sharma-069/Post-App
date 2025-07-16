@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "root",
+    "password": "password",
+    "database": "evdb",
+    "host": "localhost",
+    "dialect": "mysql",
+    "logging": true,
+    "pool": {
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "EvDB",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "EvDB",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
