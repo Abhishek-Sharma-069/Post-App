@@ -27,13 +27,21 @@ const app = express();
 // ===============================
 // Enable CORS for frontend (adjust origin as needed)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Frontend URL
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+  ], // Frontend URL
   credentials: true, // Allow cookies
 }));
 // Parse JSON request bodies
 app.use(express.json());
 // Parse cookies
 app.use(cookieParser());
+
+app.use('/', (req, res) => {
+  res.send('Hello Duniya');
+});
 // Serve uploaded images statically
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
