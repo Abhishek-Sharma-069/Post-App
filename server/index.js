@@ -39,9 +39,7 @@ app.use(express.json());
 // Parse cookies
 app.use(cookieParser());
 
-app.use('/', (req, res) => {
-  res.send('Hello Duniya');
-});
+
 // Serve uploaded images statically
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
