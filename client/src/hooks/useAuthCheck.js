@@ -3,7 +3,7 @@
  * Fetches /auth/check and returns { auth, loading, user }.
  * Usage: const { auth, loading, user } = useAuthCheck();
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { instance as axios } from '../utils/axios';
 
 export default function useAuthCheck() {
@@ -12,28 +12,23 @@ export default function useAuthCheck() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    // Check authentication by calling /auth/check
-    axios.get('/auth/check', { withCredentials: true })
-      .then(res => {
-        if (isMounted) {
-          setAuth(true);
-          setUser(res.data.user || null);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setAuth(false);
-          setUser(null);
-          setLoading(false);
-        }
-      });
-    // Cleanup to avoid setting state on unmounted component
-    return () => { isMounted = false; };
+  const checkAuth = useCallback(async () => {
+    try {
+      const res = await axios.get('/auth/check', { withCredentials: true });
+      setAuth(true);
+      setUser(res.data.user || null);
+      setLoading(false);
+    } catch (error) {
+      setAuth(false);
+      setUser(null);
+      setLoading(false);
+    }
   }, []);
 
-  // Return auth status, loading state, and user info
-  return { auth, loading, user };
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Return auth status, loading state, user info, and refresh function
+  return { auth, loading, user, refreshAuth: checkAuth };
 } 

@@ -13,14 +13,14 @@ import Post from "./pages/Post";
 import Profile from "./pages/Profile";
 // PrivateRoute component to protect routes
 function PrivateRoute({ children }) {
-  const { auth, loading } = useAuthCheck();
+  const { auth, loading, refreshAuth } = useAuthCheck();
   if (loading) return <div>Loading...</div>;
   return auth ? children : <Navigate to="/login" replace />;
 }
 
 // PublicRoute component to prevent access to login/register if authenticated
 function PublicRoute({ children }) {
-  const { auth, loading } = useAuthCheck();
+  const { auth, loading, refreshAuth } = useAuthCheck();
   if (loading) return <div>Loading...</div>;
   return !auth ? children : <Navigate to="/" replace />;
 }

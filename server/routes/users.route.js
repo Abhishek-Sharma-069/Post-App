@@ -107,7 +107,7 @@ router.get("/check", (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL?.startsWith('https'),
     sameSite: 'lax',
   });
   res.status(200).json({ message: "Logged out successfully" });

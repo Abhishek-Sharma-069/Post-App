@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import useForm from "../hooks/useForm";
+import useAuthCheck from "../hooks/useAuthCheck";
 import { instance as axios } from "../utils/axios";
 import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
@@ -7,6 +8,7 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuthCheck();
   const {
     values, handleChange, handleSubmit, error, setError, success, setSuccess, isSubmitting
   } = useForm({
@@ -24,6 +26,8 @@ const Login = () => {
         );
         setSuccess("Login successful!");
         setValues({ username: "", password: "" });
+        // Refresh authentication status
+        await refreshAuth();
         navigate("/");
       } catch (error) {
         const errorMessage = error.response?.data?.error || "Login failed. Please try again.";
