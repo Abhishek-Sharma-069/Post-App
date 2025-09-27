@@ -69,20 +69,21 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // 5. Set JWT as HTTP-only cookie
+    // 5. Set JWT as HTTP-only cookie (cross-origin compatible)
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL?.startsWith('https'),
-      sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      secure: true, // Must be true for HTTPS backend
+      sameSite: 'none', // Allow cross-origin cookies
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      domain: '.onrender.com', // Allow subdomain cookies
+      path: '/'
     });
 
     // 6. Success response (no token in body)
     res.status(200).json({
       message: "Login successful",
-      user: { id: user.id, username: user.username }
+      user: { id: user.id, username: user.username },
     });
-
   } catch (error) {
     console.error(error); // Log the error for debugging
     res.status(500).json({ error: "Server error", details: error.message });
@@ -107,8 +108,10 @@ router.get("/check", (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL?.startsWith('https'),
-    sameSite: 'lax',
+    secure: true, // Must be true for HTTPS backend
+    sameSite: 'none', // Allow cross-origin cookies
+    domain: '.onrender.com', // Allow subdomain cookies
+    path: '/'
   });
   res.status(200).json({ message: "Logged out successfully" });
 });
