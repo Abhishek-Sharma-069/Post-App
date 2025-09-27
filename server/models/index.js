@@ -15,7 +15,8 @@ if (config.use_env_variable) {
     ...config,
     logging: console.log,
     dialectOptions: {
-      connectTimeout: 60000
+      connectTimeout: 60000,
+      ...config.dialectOptions
     }
   });
 }
