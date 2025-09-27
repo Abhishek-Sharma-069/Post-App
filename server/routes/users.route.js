@@ -70,14 +70,17 @@ router.post("/login", async (req, res) => {
     );
 
     // 5. Set JWT as HTTP-only cookie (cross-origin compatible)
-    res.cookie('token', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: true, // Must be true for HTTPS backend
       sameSite: 'none', // Allow cross-origin cookies
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       domain: '.onrender.com', // Allow subdomain cookies
       path: '/'
-    });
+    };
+    
+    console.log('Login - Setting cookie with options:', cookieOptions);
+    res.cookie('token', token, cookieOptions);
 
     // 6. Success response (no token in body)
     res.status(200).json({
@@ -92,14 +95,23 @@ router.post("/login", async (req, res) => {
 
 // AUTH CHECK
 router.get("/check", (req, res) => {
+  console.log('Auth check - Cookies received:', req.cookies);
+  console.log('Auth check - Headers:', req.headers.cookie);
+  
   const token = req.cookies.token;
   if (!token) {
+    console.log('Auth check - No token found');
     return res.status(401).json({ error: "Not authenticated" });
   }
+  
+  console.log('Auth check - Token found:', token.substring(0, 20) + '...');
+  
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    console.log('Auth check - Token valid, user:', decoded);
     res.status(200).json({ authenticated: true, user: decoded });
   } catch (err) {
+    console.log('Auth check - Token invalid:', err.message);
     res.status(401).json({ error: "Invalid or expired token" });
   }
 });
