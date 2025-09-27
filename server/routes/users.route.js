@@ -69,15 +69,22 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // 5. Set JWT as HTTP-only cookie (cross-origin compatible)
+    // 5. Set JWT as HTTP-only cookie (environment-aware)
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isCrossOrigin = process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost');
+    
     const cookieOptions = {
       httpOnly: true,
-      secure: true, // Must be true for HTTPS backend
-      sameSite: 'none', // Allow cross-origin cookies
+      secure: isProduction, // Only secure in production
+      sameSite: isCrossOrigin ? 'none' : 'lax', // Cross-origin only when needed
       maxAge: 24 * 60 * 60 * 1000, // 1 day
-      domain: '.onrender.com', // Allow subdomain cookies
       path: '/'
     };
+    
+    // Only set domain for cross-origin in production
+    if (isCrossOrigin && isProduction) {
+      cookieOptions.domain = '.onrender.com';
+    }
     
     console.log('Login - Setting cookie with options:', cookieOptions);
     res.cookie('token', token, cookieOptions);
@@ -118,13 +125,22 @@ router.get("/check", (req, res) => {
 
 // AUTH LOGOUT
 router.post("/logout", (req, res) => {
-  res.clearCookie('token', {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isCrossOrigin = process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost');
+  
+  const clearCookieOptions = {
     httpOnly: true,
-    secure: true, // Must be true for HTTPS backend
-    sameSite: 'none', // Allow cross-origin cookies
-    domain: '.onrender.com', // Allow subdomain cookies
+    secure: isProduction, // Only secure in production
+    sameSite: isCrossOrigin ? 'none' : 'lax', // Cross-origin only when needed
     path: '/'
-  });
+  };
+  
+  // Only set domain for cross-origin in production
+  if (isCrossOrigin && isProduction) {
+    clearCookieOptions.domain = '.onrender.com';
+  }
+  
+  res.clearCookie('token', clearCookieOptions);
   res.status(200).json({ message: "Logged out successfully" });
 });
 
