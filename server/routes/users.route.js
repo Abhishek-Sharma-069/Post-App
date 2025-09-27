@@ -71,20 +71,20 @@ router.post("/login", async (req, res) => {
 
     // 5. Set JWT as HTTP-only cookie (environment-aware)
     const isProduction = process.env.NODE_ENV === 'production';
-    const isCrossOrigin = process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost');
+    const frontendUrl = process.env.FRONTEND_URL;
+    const isCrossOrigin = frontendUrl && !frontendUrl.includes('localhost');
     
     const cookieOptions = {
       httpOnly: true,
-      secure: isProduction, // Only secure in production
+      secure: true, // Always secure for HTTPS
       sameSite: isCrossOrigin ? 'none' : 'lax', // Cross-origin only when needed
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       path: '/'
     };
     
-    // Only set domain for cross-origin in production
-    if (isCrossOrigin && isProduction) {
-      cookieOptions.domain = '.onrender.com';
-    }
+    // Don't set domain for cross-origin - let browser handle it
+    console.log('Login - Frontend URL:', frontendUrl);
+    console.log('Login - Is cross-origin:', isCrossOrigin);
     
     console.log('Login - Setting cookie with options:', cookieOptions);
     res.cookie('token', token, cookieOptions);
@@ -125,20 +125,15 @@ router.get("/check", (req, res) => {
 
 // AUTH LOGOUT
 router.post("/logout", (req, res) => {
-  const isProduction = process.env.NODE_ENV === 'production';
-  const isCrossOrigin = process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost');
+  const frontendUrl = process.env.FRONTEND_URL;
+  const isCrossOrigin = frontendUrl && !frontendUrl.includes('localhost');
   
   const clearCookieOptions = {
     httpOnly: true,
-    secure: isProduction, // Only secure in production
+    secure: true, // Always secure for HTTPS
     sameSite: isCrossOrigin ? 'none' : 'lax', // Cross-origin only when needed
     path: '/'
   };
-  
-  // Only set domain for cross-origin in production
-  if (isCrossOrigin && isProduction) {
-    clearCookieOptions.domain = '.onrender.com';
-  }
   
   res.clearCookie('token', clearCookieOptions);
   res.status(200).json({ message: "Logged out successfully" });

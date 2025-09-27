@@ -33,6 +33,7 @@ app.use(cors({
     'http://127.0.0.1:5173'
   ], // Frontend URL
   credentials: true, // Allow cookies
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
 // Parse JSON request bodies
 app.use(express.json());
