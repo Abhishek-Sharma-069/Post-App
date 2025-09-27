@@ -135,6 +135,7 @@ router.post("/logout", (req, res) => {
     path: '/'
   };
   
+  console.log('Logout - Clearing cookie with options:', clearCookieOptions);
   res.clearCookie('token', clearCookieOptions);
   res.status(200).json({ message: "Logged out successfully" });
 });

@@ -5,14 +5,22 @@ import useAuthCheck from "../hooks/useAuthCheck";
 import { MdPerson, MdMenu, MdClose } from "react-icons/md";
 
 const Navbar = () => {
-  const { auth, loading } = useAuthCheck();
+  const { auth, loading, refreshAuth } = useAuthCheck();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await axios.post("/auth/logout", {}, { withCredentials: true }).catch(() => {});
+    try {
+      await axios.post("/auth/logout", {}, { withCredentials: true });
+    } catch (error) {
+      console.log('Logout error:', error);
+    }
+    // Clear any local storage if needed
+    localStorage.removeItem('token');
+    // Refresh authentication state
+    await refreshAuth();
+    // Navigate to login
     navigate("/login");
-    window.location.reload();
   };
 
   // Nav links as a component for reuse
