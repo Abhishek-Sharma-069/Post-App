@@ -1,4 +1,4 @@
-# HeyEV Social Posting App
+# Social Posting App
 
 ## Screenshots
 
